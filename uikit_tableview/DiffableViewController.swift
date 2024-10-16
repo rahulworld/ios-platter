@@ -18,29 +18,29 @@ class DiffableDataSource: UITableViewDiffableDataSource<Continents, Country> {
         }
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard let user = self.itemIdentifier(for: IndexPath(item: 0, section: section)) else { return nil }
-        return self.snapshot().sectionIdentifier(containingItem: user)?.name
-    }
+    //    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    //        guard let user = self.itemIdentifier(for: IndexPath(item: 0, section: section)) else { return nil }
+    //        return self.snapshot().sectionIdentifier(containingItem: user)?.name
+    //    }
     
     //MARK: IT does not work and override in diffable datasource
-//    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        guard let header = tableView.dequeueReusableHeaderFooterView(
-//            withIdentifier: SectionHeaderReusableView.reuseIdentifier) as? SectionHeaderReusableView
-//        else {
-//            return nil
-//        }
-//
-////        if section == Section.allContacts.rawValue {
-////            header.titleLabel.text = "Your Contacts"
-////        } else {
-////            header.titleLabel.text = "Friends Contacts"
-////        }
-//
-//        header.title.text = "SECTIONS HEADER"
-//
-//        return header
-//    }
+    //    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    //        guard let header = tableView.dequeueReusableHeaderFooterView(
+    //            withIdentifier: SectionHeaderReusableView.reuseIdentifier) as? SectionHeaderReusableView
+    //        else {
+    //            return nil
+    //        }
+    //
+    ////        if section == Section.allContacts.rawValue {
+    ////            header.titleLabel.text = "Your Contacts"
+    ////        } else {
+    ////            header.titleLabel.text = "Friends Contacts"
+    ////        }
+    //
+    //        header.title.text = "SECTIONS HEADER"
+    //
+    //        return header
+    //    }
 }
 
 
@@ -52,7 +52,8 @@ class DiffableViewController: UIViewController {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .yellow
-        tableView.register(CountryCell.self, forCellReuseIdentifier: CountryCell.identifier)
+        tableView.register(CountryCell.self, forCellReuseIdentifier: CountryCell.reuseIdentifier)
+        tableView.register(SectionHeaderReusableView.self, forHeaderFooterViewReuseIdentifier: SectionHeaderReusableView.reuseIdentifier)
         return tableView
     }()
     private lazy var dataSource = DiffableDataSource(tableView: tableView)
@@ -61,6 +62,7 @@ class DiffableViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(tableView)
+        tableView.delegate = self
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -103,4 +105,25 @@ class DiffableViewController: UIViewController {
             
         }.resume()
     }
+}
+
+extension DiffableViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let header = tableView.dequeueReusableHeaderFooterView(
+            withIdentifier: SectionHeaderReusableView.reuseIdentifier) as? SectionHeaderReusableView
+        else {
+            return nil
+        }
+        guard let country = dataSource.itemIdentifier(for: IndexPath(item: 0, section: section)) else {return nil}
+//        header.title.text = snapshot.sectionIdentifier(containingItem: country)?.
+//        let sectionObject = snapshot.sectionIdentifiers[section]
+//        header.title.text = sectionObject.name
+        header.title.text = country.region
+        return header
+    }
+    
+//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return 100
+//    }
+
 }

@@ -16,16 +16,29 @@ enum CountriesSections {
 struct Continents: Hashable {
     let id = UUID()
     let name: String
+    
+//    func hash(into hasher: inout Hasher) {
+//                hasher.combine(id)
+//                hasher.combine(name)
+//    }
+//
+//    static func == (lhs: Continents, rhs: Continents) -> Bool {
+//        lhs.id == rhs.id && lhs.name == rhs.name
+//    }
 }
 
 struct Country: Hashable {
     let id = UUID()
     let name: String
     let region: String
+    
+    
 }
 
 class SectionHeaderReusableView: UITableViewHeaderFooterView {
     static let reuseIdentifier = "\(SectionHeaderReusableView.self)"
+    static let reuseId = "HeaderView"
+
     var title: UILabel = {
         let lable = UILabel()
         lable.textColor = .black
@@ -45,6 +58,10 @@ class SectionHeaderReusableView: UITableViewHeaderFooterView {
         translatesAutoresizingMaskIntoConstraints = false
         title.translatesAutoresizingMaskIntoConstraints = false
         addSubview(title)
+    }
+    
+    override func prepareForReuse() {
+        title.text = ""
     }
 }
 
@@ -94,5 +111,10 @@ class CountryCell: UITableViewCell {
             hStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
         ])
         
+    }
+    
+    override func prepareForReuse() {
+        name.text = ""
+        code.text = ""
     }
 }
